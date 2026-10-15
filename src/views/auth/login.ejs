@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión | ViveSport</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body class="pagina-login">
+
+    <main class="tarjeta-login">
+        <div class="marca">
+            <h1>ViveSport</h1>
+            <p>Sistema de Gestión de Torneos Deportivos</p>
+        </div>
+
+        <h2>Iniciar sesión</h2>
+        <p class="texto-secundario">
+            Ingresa tus credenciales para continuar.
+        </p>
+
+        <% if (error) { %>
+            <div class="mensaje-error" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/login" method="POST">
+            <div class="campo">
+                <label for="correo">Correo electrónico</label>
+                <input
+                    type="email"
+                    id="correo"
+                    name="correo"
+                    autocomplete="username"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="boton-principal">
+                Ingresar
+            </button>
+        </form>
+
+        <p class="pie-login">
+            ViveSport · Gestión deportiva
+        </p>
+    </main>
+
+</body>
+</html>

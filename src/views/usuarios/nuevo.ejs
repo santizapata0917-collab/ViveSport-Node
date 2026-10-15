@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar usuario | ViveSport</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+    <style>
+        .formulario-contenedor {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 28px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.07);
+        }
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 18px;
+        }
+        .campo input {
+            padding: 12px;
+            border: 1px solid #ccd5d9;
+            border-radius: 7px;
+            font: inherit;
+        }
+        .boton {
+            display: inline-block;
+            padding: 12px 17px;
+            border: 0;
+            border-radius: 7px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .guardar {
+            background: #004f3f;
+            color: white;
+        }
+        .cancelar {
+            background: #edf0f2;
+            color: #263238;
+        }
+        .error {
+            background: #fde8e7;
+            color: #a52822;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+        }
+        .acciones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <main class="formulario-contenedor">
+        <h1>Registrar usuario</h1>
+        <p>Completa los datos para crear una nueva cuenta.</p>
+
+        <% if (error) { %>
+            <div class="error" role="alert"><%= error %></div>
+        <% } %>
+
+        <form action="/admin/usuarios/nuevo" method="POST">
+            <div class="campo">
+                <label for="nombre">Nombre</label>
+                <input
+                    id="nombre"
+                    name="nombre"
+                    type="text"
+                    maxlength="60"
+                    value="<%= datos.nombre || '' %>"
+                    autocomplete="given-name"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="apellido">Apellido</label>
+                <input
+                    id="apellido"
+                    name="apellido"
+                    type="text"
+                    maxlength="60"
+                    value="<%= datos.apellido || '' %>"
+                    autocomplete="family-name"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="correo">Correo electrónico</label>
+                <input
+                    id="correo"
+                    name="correo"
+                    type="email"
+                    maxlength="150"
+                    value="<%= datos.correo || '' %>"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña inicial</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+                <small>Debe tener al menos 8 caracteres.</small>
+            </div>
+
+            <p>El nuevo registro se creará con el rol de usuario y estado activo.</p>
+
+            <div class="acciones">
+                <button class="boton guardar" type="submit">Crear usuario</button>
+                <a class="boton cancelar" href="/admin/usuarios">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

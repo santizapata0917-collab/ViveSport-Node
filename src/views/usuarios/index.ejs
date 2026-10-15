@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios | ViveSport</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+    <style>
+        .usuarios-contenedor {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 24px;
+        }
+        .usuarios-cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .usuarios-tabla-contenedor {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.06);
+        }
+        .usuarios-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+        .usuarios-tabla th,
+        .usuarios-tabla td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #e8ecef;
+        }
+        .usuarios-tabla th {
+            background: #f4f6f8;
+            color: #004f3f;
+        }
+        .acciones {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .boton {
+            display: inline-block;
+            padding: 10px 15px;
+            border: 0;
+            border-radius: 7px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .boton-principal {
+            background: #004f3f;
+            color: white;
+        }
+        .boton-editar {
+            background: #e6f0ed;
+            color: #004f3f;
+        }
+        .boton-eliminar {
+            background: #fde8e7;
+            color: #a52822;
+        }
+        .mensaje {
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+        .mensaje.exito {
+            background: #e4f5e9;
+            color: #176534;
+        }
+        .mensaje.error {
+            background: #fde8e7;
+            color: #a52822;
+        }
+        .sin-resultados {
+            text-align: center !important;
+            padding: 30px !important;
+            color: #64748b;
+        }
+        .buscador {
+            width: 100%;
+            max-width: 360px;
+            padding: 11px 13px;
+            border: 1px solid #ccd5d9;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <main class="usuarios-contenedor">
+        <div class="usuarios-cabecera">
+            <div>
+                <h1>Gestión de usuarios</h1>
+                <p>Administra las cuentas registradas en ViveSport.</p>
+            </div>
+            <a class="boton boton-principal" href="/admin/usuarios/nuevo">
+                + Registrar usuario
+            </a>
+        </div>
+
+        <% if (mensaje) { %>
+            <div class="mensaje <%= tipo === 'error' ? 'error' : 'exito' %>"
+                 role="status">
+                <%= mensaje %>
+            </div>
+        <% } %>
+
+        <input
+            class="buscador"
+            type="search"
+            id="buscadorUsuarios"
+            placeholder="Buscar por nombre, apellido o correo..."
+            aria-label="Buscar usuarios"
+        >
+
+        <p>Total de usuarios registrados: <strong><%= usuarios.length %></strong></p>
+
+        <div class="usuarios-tabla-contenedor">
+            <table class="usuarios-tabla">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Correo electrónico</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaUsuarios">
+                    <% usuarios.forEach(usuario => { %>
+                        <tr>
+                            <td><%= usuario.nombre %></td>
+                            <td><%= usuario.apellido %></td>
+                            <td><%= usuario.correo %></td>
+                            <td><%= usuario.rol === 'admin' ? 'Administrador' : 'Usuario' %></td>
+                            <td><%= usuario.activo ? 'Activo' : 'Inactivo' %></td>
+                            <td>
+                                <% if (usuario.rol !== 'admin') { %>
+                                    <div class="acciones">
+                                        <a
+                                            class="boton boton-editar"
+                                            href="/admin/usuarios/editar/<%= usuario._id %>"
+                                        >Editar</a>
+
+                                        <form
+                                            action="/admin/usuarios/eliminar/<%= usuario._id %>"
+                                            method="POST"
+                                            onsubmit="return confirm('¿Seguro que deseas eliminar este usuario? Esta acción no se puede deshacer.');"
+                                        >
+                                            <button class="boton boton-eliminar" type="submit">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                <% } else { %>
+                                    <span>Cuenta protegida</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                    <tr id="filaVacia" hidden>
+                        <td colspan="6" class="sin-resultados">
+                            No se encontraron usuarios con esa búsqueda.
+                        </td>
+                    </tr>
+                    <% if (usuarios.length === 0) { %>
+                        <tr>
+                            <td colspan="6" class="sin-resultados">
+                                Todavía no hay usuarios registrados.
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <p>
+            <a href="/dashboard">Volver al dashboard</a>
+        </p>
+    </main>
+
+    <script>
+        const buscador = document.getElementById('buscadorUsuarios');
+        const filas = Array.from(
+            document.querySelectorAll('#tablaUsuarios tr')
+        ).filter(fila => fila.id !== 'filaVacia');
+
+        const filaVacia = document.getElementById('filaVacia');
+
+        buscador.addEventListener('input', function () {
+            const termino = this.value.trim().toLowerCase();
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                const coincide = fila.textContent.toLowerCase().includes(termino);
+                fila.hidden = !coincide;
+
+                if (coincide) visibles++;
+            });
+
+            filaVacia.hidden = visibles !== 0;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+
+# Dependencias
+node_modules/
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Registros
+*.log
+npm-debug.log*
+
+# Archivos del sistema
+.DS_Store
+
+# Archivos temporales
+coverage/
+tmp/
