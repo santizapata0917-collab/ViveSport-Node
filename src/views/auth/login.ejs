@@ -26,6 +26,12 @@
             </div>
         <% } %>
 
+        <% if (typeof registroExitoso !== 'undefined' && registroExitoso) { %>
+    <div class="mensaje-exito" role="status">
+        Tu cuenta fue creada correctamente. Ya puedes iniciar sesión.
+    </div>
+<% } %>
+
         <form action="/login" method="POST">
             <div class="campo">
                 <label for="correo">Correo electrónico</label>
@@ -54,6 +60,10 @@
                 Ingresar
             </button>
         </form>
+        <p class="enlace-registro">
+    ¿Todavía no tienes una cuenta?
+    <a href="/registro">Regístrate aquí</a>
+</p>
 
         <p class="pie-login">
             ViveSport · Gestión deportiva

@@ -104,3 +104,31 @@ body {
     color: #7b8582;
     font-size: 12px;
 }
+
+
+.enlace-registro {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 14px;
+    color: #65716f;
+}
+
+.enlace-registro a {
+    color: #004f3f;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.enlace-registro a:hover {
+    color: #0a6755;
+    text-decoration: underline;
+}
+
+.mensaje-exito {
+    margin: 18px 0;
+    padding: 12px;
+    border-radius: 8px;
+    color: #155724;
+    background: #d4edda;
+    font-size: 14px;
+}

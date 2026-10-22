@@ -17,3 +17,9 @@ npm-debug.log*
 # Archivos temporales
 coverage/
 tmp/
+
+# Respaldos de la base de datos
+backups/
+
+# Dependencias y archivos locales
+.DS_Store

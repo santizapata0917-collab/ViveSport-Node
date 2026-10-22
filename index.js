@@ -1,10 +1,12 @@
 require('dotenv').config();
 
+const logger = require('./src/config/logger');
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const conectarDB = require('./src/config/database');
+const iniciarTareasAutomaticas = require('./src/tasks/tareasAutomaticas');
 const authRoutes = require('./src/routes/authRoutes');
 const session = require('express-session');
 const MongoStore = require('connect-mongo').default;
@@ -69,15 +71,16 @@ app.use(rateLimit({
     legacyHeaders: false
 }));
 
-// DIAGNÓSTICO TEMPORAL DE RUTAS
+// REGISTRO DE SOLICITUDES HTTP
 app.use((req, res, next) => {
-    console.log('Solicitud:', req.method, req.originalUrl);
+    console.log('MIDDLEWARE HTTP EJECUTADO:', req.method, req.originalUrl);
+    logger.info(`${req.method} ${req.originalUrl}`);
     next();
 });
 
 // RUTA PRINCIPAL: SIEMPRE REDIRIGE AL LOGIN
 app.get('/', (req, res) => {
-    console.log('Ejecutando redirección de / a /login');
+    logger.info('Redirección de / a /login');
     return res.redirect('/login');
 });
 
@@ -107,28 +110,36 @@ app.use((req, res) => {
     res.status(404).send('Página no encontrada');
 });
 
-// MANEJO DE ERRORES
+
+ // MANEJO CENTRALIZADO DE ERRORES
 app.use((err, req, res, next) => {
-    console.error('Error del servidor:', err);
+    logger.error(
+        `Error en ${req.method} ${req.originalUrl}: ${err.stack || err.message}`
+    );
+
+    if (res.headersSent) {
+        return next(err);
+    }
+
     res.status(500).send('Error interno del servidor');
 });
 
 async function iniciarServidor() {
     try {
         await conectarDB();
+        iniciarTareasAutomaticas();
 
         app.listen(PORT, '0.0.0.0', () => {
-            console.log('-----------------------------------');
-            console.log('ViveSport iniciado correctamente');
-            console.log(`Puerto: ${PORT}`);
-            console.log(`Dirección: http://localhost:${PORT}`);
-            console.log('Ruta inicial configurada: / -> /login');
-            console.log('-----------------------------------');
+            logger.info('-----------------------------------');
+            logger.info('ViveSport iniciado correctamente');
+            logger.info(`Puerto: ${PORT}`);
+            logger.info(`Dirección: http://localhost:${PORT}`);
+            logger.info('Ruta inicial configurada: / -> /login');
+            logger.info('-----------------------------------');
         });
     } catch (error) {
-        console.error(
-            'No fue posible iniciar ViveSport:',
-            error.message
+        logger.error(
+            `No fue posible iniciar ViveSport: ${error.stack || error.message}`
         );
 
         process.exit(1);
